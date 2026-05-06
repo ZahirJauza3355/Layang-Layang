@@ -35,45 +35,24 @@ Route::middleware('auth')->group(function () {
 
 
 // ================= ROLE SYSTEM =================
-Route::middleware(['auth'])->group(function () {
 
-    // ===== ADMIN =====
-    Route::middleware('role:admin')->group(function () {
-        Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
+// ===== ADMIN =====
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+    Route::post('/approve/{id}', [AdminController::class, 'approve'])->name('approve');
+    Route::delete('/delete/{id}', [AdminController::class, 'delete'])->name('delete');
+});
 
-        // ACC peserta
-        Route::post('/approve/{id}', [AdminController::class, 'approve'])->name('admin.approve');
-    });
-
-
-    // ===== JURI =====
+// ===== JURI =====
 Route::middleware(['auth', 'role:juri'])->prefix('juri')->name('juri.')->group(function () {
     Route::get('/dashboard', [JuriController::class, 'index'])->name('dashboard');
     Route::post('/nilai/{karya_id}', [JuriController::class, 'simpanNilai'])->name('nilai');
 });
 
-
-    // ===== PESERTA =====
+// ===== PESERTA =====
 Route::middleware(['auth', 'role:peserta'])->prefix('peserta')->name('peserta.')->group(function () {
     Route::get('/dashboard', [PesertaController::class, 'index'])->name('dashboard');
     Route::post('/upload', [PesertaController::class, 'upload'])->name('upload');
 });
 
-
-});
-
 require __DIR__.'/auth.php';
-// ================= AUTH =================
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-
-Route::post('/logout', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])
-    ->name('logout');
-
-// ===== ADMIN =====
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/',           [AdminController::class, 'index'])->name('dashboard');
-    Route::post('/approve/{id}', [AdminController::class, 'approve'])->name('approve');
-    Route::delete('/delete/{id}', [AdminController::class, 'destroyUser'])->name('delete');
-});

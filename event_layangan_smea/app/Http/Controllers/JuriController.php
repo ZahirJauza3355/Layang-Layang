@@ -36,18 +36,18 @@ class JuriController extends Controller
 
         $karya = Karya::findOrFail($karya_id);
 
-        Penilaian::updateOrCreate(
-            [
-                'karya_id' => $karya->id,
-                'user_id'  => auth()->id(),
-            ],
-            [
-                'kreativitas' => $request->kreativitas,
-                'keindahan'   => $request->keindahan,
-                'keunikan'    => $request->keunikan,
-                'total'       => $total,
-            ]
-        );
+       Penilaian::updateOrCreate(
+    [
+        'karya_id' => $karya->id,
+        'juri_id'  => auth()->id(),   // ← ganti user_id jadi juri_id
+    ],
+    [
+        'kreativitas' => $request->kreativitas,
+        'keindahan'   => $request->keindahan,
+        'keunikan'    => $request->keunikan,
+        'total'       => $total,
+    ]
+);
 
         return back()->with('success', "Nilai karya \"{$karya->judul}\" berhasil disimpan! Total: {$total}");
     }

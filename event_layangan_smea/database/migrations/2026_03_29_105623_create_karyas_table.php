@@ -6,25 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('karyas', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('judul');
-            $table->string('file');
-            $table->timestamps();
+        Schema::table('karyas', function (Blueprint $table) {
+            if (!Schema::hasColumn('karyas', 'user_id')) {
+                $table->unsignedBigInteger('user_id')->nullable()->after('id');
+            }
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('karyas');
+        Schema::table('karyas', function (Blueprint $table) {
+            if (Schema::hasColumn('karyas', 'user_id')) {
+                $table->dropColumn('user_id');
+            }
+        });
     }
 };
